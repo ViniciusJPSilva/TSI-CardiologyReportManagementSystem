@@ -1,0 +1,16 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page import="br.vjps.tsi.crms.enumeration.PhysicianCategory"%>
+<%@ include file="_authentication.jsp"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+	<c:if test="${sessionScope.user.category != PhysicianCategory.TEACHING}">
+		<jsp:forward page="menu.jsp"></jsp:forward>
+	</c:if>
+</body>
+</html>

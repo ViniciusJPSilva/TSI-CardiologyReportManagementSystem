@@ -1,0 +1,100 @@
+/*
+Nome do BD: cardiology-system
+Proprietário: aluno
+Senha: aluno
+*/
+
+CREATE TABLE physician (
+	crm BIGINT NOT NULL UNIQUE,
+	"name" VARCHAR(255) NOT NULL,
+	"type" VARCHAR(63),
+	residency_start_year SMALLINT,
+	title VARCHAR(63),
+	CONSTRAINT PK_Physician PRIMARY KEY (crm)
+);
+
+CREATE TABLE patient (
+	cpf VARCHAR(11) NOT NULL UNIQUE,
+	"name" VARCHAR(255) NOT NULL,
+	email VARCHAR(127) NOT NULL,
+	gender VARCHAR(15) NOT NULL,
+	birth_date DATE NOT NULL,
+	CONSTRAINT PK_Patient PRIMARY KEY (cpf)
+);
+
+CREATE TABLE "user" (
+	login BIGINT NOT NULL UNIQUE,
+	"password" VARCHAR(31) NOT NULL,
+	CONSTRAINT PK_User PRIMARY KEY (login)
+);
+
+CREATE SEQUENCE "seq-exam";
+
+CREATE TABLE exam (
+	"id" BIGINT NOT NULL DEFAULT NEXTVAL('seq-exam'),
+	patient_cpf VARCHAR(11) NOT NULL,
+	"type" VARCHAR(63) NOT NULL,
+	status VARCHAR(63) NOT NULL,
+	hypothesis VARCHAR(7) NOT NULL,
+	recomendation VARCHAR(255),
+	physician_crm BIGINT NOT NULL,
+	expected_date DATE,
+	exam_date TIMESTAMP WITH TIME ZONE,
+	result_path VARCHAR(512),
+	CONSTRAINT PK_Exam PRIMARY KEY ("id"),
+	CONSTRAINT FK_Patient FOREIGN KEY (patient_cpf) REFERENCES patient(cpf) ON DELETE CASCADE,
+	CONSTRAINT FK_Physician FOREIGN KEY (physician_crm) REFERENCES physician(crm) ON DELETE CASCADE
+);
+
+CREATE SEQUENCE "seq-report";
+
+CREATE TABLE report (
+	"id" BIGINT NOT NULL DEFAULT NEXTVAL('seq-report'),
+	exam_id BIGINT NOT NULL,
+	is_definitive BOOLEAN DEFAULT FALSE NOT NULL, 
+	description VARCHAR(255) NOT NULL,
+	conclusion VARCHAR(7) NOT NULL,
+	resident_crm BIGINT NOT NULL,
+	teaching_crm BIGINT,
+	emission_date TIMESTAMP WITH TIME ZONE,
+	CONSTRAINT PK_Report PRIMARY KEY ("id"),
+	CONSTRAINT FK_Exam FOREIGN KEY (exam_id) REFERENCES exam("id") ON DELETE CASCADE,
+	CONSTRAINT FK_Resident FOREIGN KEY (resident_crm) REFERENCES physician(crm) ON DELETE CASCADE
+);
+
+INSERT INTO "physician" (crm, "name", "type") 
+VALUES 
+(111111, 'Dra Ana Paula da Silva', 'Medico'), 
+(222222, 'Dr João Carlos Santos', 'Medico'), 
+(333333, 'Dra Fernanda Oliveira', 'Medico');
+
+INSERT INTO "physician" (crm, "name", "type", title) 
+VALUES 
+(444444, 'Professor Marcos Vinícius Costa', 'Docente', 'Titular'), 
+(555555, 'Professora Isabela Souza', 'Docente', 'Doutor'), 
+(666666, 'Professor Rafael Pereira', 'Docente', 'Livre-docente');
+
+INSERT INTO "physician" (crm, "name", "type", residency_start_year) 
+VALUES 
+(777777, 'Residente Juliana Ramos', 'Residente', 2022), 
+(888888, 'Residente André Luiz Ferreira', 'Residente', 2020), 
+(999999, 'Residente Camila Alves', 'Residente', 2021);
+
+INSERT INTO "user" (login, "password") 
+VALUES 
+(111111, '111111'), (222222, '222222'), (333333, '333333'), 
+(444444, '444444'), (555555, '555555'), (666666, '666666'), 
+(777777, '777777'), (888888, '888888'), (999999, '999999');
+
+INSERT INTO patient (cpf, "name", email, gender, birth_date)
+VALUES
+  ('12345678901', 'Ana Silva', 'ana.silva@email.com', 'Feminino', '1990-05-15'),
+  ('23456789012', 'João Santos', 'joao.santos@email.com', 'Masculino', '1985-12-20'),
+  ('34567890123', 'Maria Oliveira', 'maria.oliveira@email.com', 'Feminino', '1993-09-10'),
+  ('45678901234', 'Pedro Costa', 'pedro.costa@email.com', 'Masculino', '1980-03-25'),
+  ('56789012345', 'Laura Souza', 'laura.souza@email.com', 'Feminino', '1988-07-02'),
+  ('67890123456', 'Marcelo Pereira', 'marcelo.pereira@email.com', 'Masculino', '1995-11-30'),
+  ('78901234567', 'Camila Ramos', 'camila.ramos@email.com', 'Feminino', '2003-04-18'),
+  ('89012345678', 'Rodrigo Ferreira', 'rodrigo.ferreira@email.com', 'Masculino', '1984-06-12'),
+  ('90123456789', 'Paula Alves', 'paula.alves@email.com', 'Feminino', '1991-08-08'),
+  ('01234567890', 'Lucas Vieira', 'lucas.vieira@email.com', 'Masculino', '2002-02-25');
